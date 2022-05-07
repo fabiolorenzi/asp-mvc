@@ -27,7 +27,52 @@ namespace tutorial.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category obj)
         {
-            _db.Categories.Add(obj);
+            if(ModelState.IsValid)
+            {
+                _db.Categories.Add(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if(id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var ObjById = _db.Categories.Find(id);
+
+            if(ObjById == null)
+            {
+                return NotFound();
+            }
+            return View(ObjById);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            var ObjById = _db.Categories.Find(id);
+
+            if (ObjById == null)
+            {
+                return NotFound();
+            }
+            _db.Categories.Remove(ObjById);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
